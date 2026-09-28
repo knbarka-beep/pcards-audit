@@ -4,13 +4,11 @@ Same format as the other Assignment 1 cases.
 
 ## Time
 
-Effective working time, excluding breaks and waiting on the API.
-
 | Date | Task | Time (h) |
 |---|---|---|
 | 26.09.2026 | Case read-through, data checks, first version of queries and site (built with Claude) | 0,5 |
-| 28.09.2026 | Running and reviewing queries, Gemini key, model fallback, GitHub, Streamlit deploy, assignment document | 2 |
-| | **Total** | **2,5** |
+| 28.09.2026 | Running and reviewing queries, Gemini key, model fallback, GitHub, Streamlit deploy, assignment document | 1,5 |
+| | **Total** | **2** |
 
 ## Cost
 

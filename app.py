@@ -20,7 +20,8 @@ st.set_page_config(page_title="OSU P-card audit", layout="wide")
 YEARS = [2014, 2013, 2012, 2011, 2010]
 MAX_ROWS = 2000
 QUERY_TIMEOUT_S = 20
-GEMINI_TIMEOUT_S = 45
+GEMINI_TIMEOUT_S = 20      # per model call
+GEMINI_TOTAL_BUDGET_S = 60  # whole question, all fallbacks included
 TX_DATE = ("printf('%04d-%02d-%02d', Year, Month, "
            "CAST(substr(TransactionDate, instr(TransactionDate, '/') + 1) AS INTEGER))")
 
@@ -123,7 +124,7 @@ def gemini_key() -> str | None:
 
 
 DEFAULT_MODELS = "gemini-3.1-flash-lite-preview, gemini-flash-latest, gemini-3.5-flash-lite"
-RETRYABLE = ("503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED", "timed out", "Timeout", "deadline")
+RETRYABLE = ("503", "unavailable", "429", "resource_exhausted", "504", "deadline", "timed out", "timeout")
 
 
 def gemini_models() -> list[str]:
@@ -157,7 +158,10 @@ def ask_gemini(question: str, year: int) -> dict:
     # Two passes over the list: overload spikes are usually short, so a second pass a few
     # seconds later often succeeds without making the auditor press Run again.
     attempts = [(round_no, m) for round_no in (1, 2) for m in gemini_models()]
+    budget_end = time.monotonic() + GEMINI_TOTAL_BUDGET_S
     for round_no, model in attempts:
+        if time.monotonic() > budget_end:
+            break
         if round_no == 2 and model == attempts[0][1]:
             time.sleep(3)
         start = time.perf_counter()
@@ -172,10 +176,11 @@ def ask_gemini(question: str, year: int) -> dict:
                 ),
             )
         except Exception as err:
-            if any(code in str(err) for code in RETRYABLE):
+            message = str(err).lower()
+            if any(code in message for code in RETRYABLE):
                 if model not in skipped:
                     skipped.append(model)
-                reasons[model] = next(c for c in RETRYABLE if c in str(err))
+                reasons[model] = next(c for c in RETRYABLE if c in message)
                 continue
             raise
         seconds = time.perf_counter() - start

@@ -1,0 +1,12 @@
+# Secrets: never commit these
+.env
+.streamlit/secrets.toml
+
+# The unpacked database is 103 MB, above GitHub's 100 MB limit. Only data/pcards.db.gz is committed.
+data/pcards.db
+data/*.tmp
+
+# Python
+.venv/
+__pycache__/
+*.pyc

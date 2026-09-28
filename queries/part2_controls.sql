@@ -93,7 +93,8 @@ ORDER BY tx.TxDate ASC, tx.FullName, tx.Vendor;
 
 -- name: Question7
 -- Food or restaurant charges on a day the same cardholder also had a hotel/motel/resort/inn charge.
--- Literal keyword match, so 'PET SHOPS,PET FOOD AND SUPPLIES' is included as a known false positive.
+-- Literal keyword match as the case asks. 'PET SHOPS,PET FOOD AND SUPPLIES' would also match 'food',
+-- but no such charge falls on a hotel day in 2014, so the output contains restaurants only.
 WITH hotel_days AS (
   SELECT DISTINCT FullName, TransactionDate
   FROM pcards

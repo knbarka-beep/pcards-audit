@@ -2,6 +2,9 @@
 
 Case 4 of Assignment 1, AI in Accounting and Business (SDU, autumn 2026).
 
+Live site: https://osu-pcard-audit.streamlit.app/
+If the app shows a sleep screen, click "Yes, get this app back up" and wait about a minute.
+
 An internal-audit toolkit over Oklahoma State University P-card transactions (2010 to 2014, 489.178 rows):
 
 - `queries/part2_controls.sql`: the fourteen internal-control tests (Part II). Controls 1 to 7 are given in the case, 8 to 14 are my own, each derived from a rule in the Part I procedure.
